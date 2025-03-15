@@ -24,7 +24,14 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    const products = client.db('delibazar').collection('products');
 
+    app.get('/products/:category', async(req,res)=>{
+      const category = req.params.category;
+      const query = {category:category}
+      const result = await products.find(query).toArray();
+      res.send(result);
+    })
 
 
 
