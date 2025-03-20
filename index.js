@@ -27,30 +27,40 @@ async function run() {
     const products = client.db('delibazar').collection('products');
     const cartsCollection = client.db('delibazar').collection('carts');
 
-    app.get('/products/:category', async(req,res)=>{
+    app.get('/products/:category', async (req, res) => {
       const category = req.params.category;
-      const query = {category:category}
+      const query = { category: category }
       const result = await products.find(query).toArray();
       res.send(result);
     })
 
 
-    app.get('/product/:id', async(req,res)=>{
+    app.get('/product/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
-      const result  = await products.findOne(query);
+      const query = { _id: new ObjectId(id) };
+      const result = await products.findOne(query);
       res.send(result);
     })
 
-
+  
 
     // Carts Related API
-    app.post('/carts',async(req,res)=>{
+    app.post('/carts', async (req, res) => {
       const info = req.body;
       // console.log(info);
       const result = await cartsCollection.insertOne(info);
       res.send(result);
     })
+    app.get('/carts', async (req, res) => {
+      const { email } = req.query;
+      if (!email) {
+        return res.status(400).json({ message: "User email is required" });
+      }
+      const query = { userEmail: email };
+      const result = await cartsCollection.find(query).toArray(); // Convert cursor to array
+      res.json(result); // Send the data as JSON response
+    })
+
 
 
 
@@ -69,9 +79,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+  res.send('Hello World!')
 })
 
-app.listen(port, ()=>{
-    console.log(`server is running at ${port}`);
+app.listen(port, () => {
+  console.log(`server is running at ${port}`);
 })
