@@ -68,9 +68,25 @@ async function run() {
       res.send(result);
     })
 
-
-
-
+    // Search API
+    app.get('/search', async (req, res) => {
+      const query = req.query.query;
+      
+      if (!query) {
+        return res.json([]);
+      }
+      try {
+        const results = await products.find({
+          name: { $regex: query, $options: "i" }, // Case-insensitive search
+        }).limit(5).toArray();  // Use toArray() to convert the result to a plain array of objects
+    
+        res.json(results);  // Send plain JavaScript objects
+      } catch (error) {
+        console.error("Search error:", error);  // Log detailed error
+        res.status(500).json({ message: "Server error", error: error.message });
+      }
+    });
+    
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
