@@ -27,6 +27,7 @@ async function run() {
     const products = client.db('delibazar').collection('products');
     const cartsCollection = client.db('delibazar').collection('carts');
 
+    // Showing homepage product
     app.get('/products/:category', async (req, res) => {
       const category = req.params.category;
       const query = { category: category }
@@ -34,7 +35,7 @@ async function run() {
       res.send(result);
     })
 
-
+    // Product details
     app.get('/product/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -67,6 +68,8 @@ async function run() {
       const result = await cartsCollection.deleteOne(query);
       res.send(result);
     })
+
+
 
     // Search API
     app.get('/search', async (req, res) => {
