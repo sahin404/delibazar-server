@@ -89,6 +89,13 @@ async function run() {
         res.status(500).json({ message: "Server error", error: error.message });
       }
     });
+
+
+    // Dashboard API
+    app.get('/products' , async(req,res)=>{
+      const result = await products.find().toArray();
+      res.send(result);
+    })
     
 
     // Send a ping to confirm a successful connection
