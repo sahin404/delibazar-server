@@ -93,8 +93,12 @@ async function run() {
 
     // Dashboard API
     app.get('/products' , async(req,res)=>{
-      const result = await products.find().toArray();
-      res.send(result);
+      const page = parseInt(req.query.page);
+      const limit = parseInt(req.query.limit);
+      const skip = (page-1) * limit;
+      const result = await products.find().skip(skip).limit(limit).toArray();
+      const total = await products.estimatedDocumentCount();
+      res.json({result,total});
     })
     
 
