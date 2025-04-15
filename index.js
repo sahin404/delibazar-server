@@ -88,8 +88,8 @@ async function run() {
 
 
     app.get('/users', async(req,res)=>{
-      const result = await users.find();
-      
+      const result = await users.find().toArray();
+      res.send(result);
     })
 
 
