@@ -87,6 +87,12 @@ async function run() {
     })
 
 
+    app.get('/users', async(req,res)=>{
+      const result = await users.find();
+      
+    })
+
+
 
     // Search API
     app.get('/search', async (req, res) => {
