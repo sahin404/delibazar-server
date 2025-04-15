@@ -123,6 +123,15 @@ async function run() {
       const total = await products.estimatedDocumentCount();
       res.json({result,total});
     })
+
+    app.get('/dbusers', async(req,res)=>{
+      const page = parseInt(req.query.page);
+      const limit = parseInt(req.query.limit);
+      const skip = (page-1)*limit;
+      const result = await users.find().skip(skip).limit(limit).toArray();
+      const total = await users.estimatedDocumentCount();
+      res.json({result,total});
+    })
     
 
     // Send a ping to confirm a successful connection
