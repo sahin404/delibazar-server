@@ -73,7 +73,13 @@ async function run() {
 
     // Users related API
     app.post('/users', async(req,res)=>{
-      // console.log(req.body);
+      const email = req.body.email;
+      const isExist = await users.findOne({email});
+
+      if(isExist){
+        return res.status(200).send({message: 'User Already Exists'}); 
+      }
+
       const data = req.body;
       const result = await users.insertOne(data);
       res.send(result);
