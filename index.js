@@ -26,6 +26,7 @@ async function run() {
 
     const products = client.db('delibazar').collection('products');
     const cartsCollection = client.db('delibazar').collection('carts');
+    const users = client.db('delibazar').collection('users');
 
     // Showing homepage product
     app.get('/products/:category', async (req, res) => {
@@ -67,6 +68,16 @@ async function run() {
       const query = {_id: new ObjectId(id)};
       const result = await cartsCollection.deleteOne(query);
       res.send(result);
+    })
+
+
+    // Users related API
+    app.post('/users', async(req,res)=>{
+      // console.log(req.body);
+      const data = req.body;
+      const result = await users.insertOne(data);
+      res.send(result);
+
     })
 
 
