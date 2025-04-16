@@ -132,6 +132,12 @@ async function run() {
       const total = await users.estimatedDocumentCount();
       res.json({result,total});
     })
+
+    app.post('/addProduct', async(req,res)=>{
+      const newProduct = req.body;
+      const result = products.insertOne(newProduct);
+      res.send(result);
+    })
     
 
     // Send a ping to confirm a successful connection
