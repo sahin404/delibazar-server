@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const verifyToken = require('./middleware');
+const jwt = require('jsonwebtoken')
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -61,8 +63,11 @@ async function run() {
       const result = await cartsCollection.insertOne(info);
       res.send(result);
     })
-    app.get('/carts', async (req, res) => {
+    app.get('/carts',verifyToken, async (req, res) => {
       const { email } = req.query;
+      if(req.decoded.email!=email){
+        return res.status(400).json({ message: "User email is required" });
+      }
       if (!email) {
         return res.status(400).json({ message: "User email is required" });
       }
