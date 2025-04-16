@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const verifyToken = require('./middleware');
+const { verifyToken} = require('./middleware');
 const jwt = require('jsonwebtoken')
 const app = express();
 const port = process.env.PORT || 5000;
@@ -21,6 +21,7 @@ const client = new MongoClient(uri, {
   }
 });
 
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -30,6 +31,31 @@ async function run() {
     const cartsCollection = client.db('delibazar').collection('carts');
     const users = client.db('delibazar').collection('users');
 
+
+    // admin verify middleware
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.decoded.email;
+      const query = { email: email };
+      const user = await users.findOne(query);
+      let admin = false;
+      if (user?.role) {
+          if (user?.role === 'admin') {
+              admin = true;
+          }
+          if (admin) {
+              next();
+          }
+          else {
+              return res.status(403).send({ message: 'forbidden-access' });
+          }
+      }
+  
+      else {
+          return res.status(403).send({ message: 'forbidden-access' });
+      }
+  }
+
+
     // Showing homepage product
     app.get('/products/:category', async (req, res) => {
       const category = req.params.category;
@@ -37,6 +63,7 @@ async function run() {
       const result = await products.find(query).toArray();
       res.send(result);
     })
+
 
     // Product details
     app.get('/product/:id', async (req, res) => {
@@ -100,7 +127,7 @@ async function run() {
     })
 
 
-    app.get('/users', async(req,res)=>{
+    app.get('/users', verifyToken, verifyAdmin, async(req,res)=>{
       const result = await users.find().toArray();
       res.send(result);
     })
@@ -128,7 +155,7 @@ async function run() {
 
 
     // Dashboard API
-    app.get('/products' , async(req,res)=>{
+    app.get('/products',verifyToken,verifyAdmin, async(req,res)=>{
       const page = parseInt(req.query.page);
       const limit = parseInt(req.query.limit);
       const skip = (page-1) * limit;
@@ -137,7 +164,7 @@ async function run() {
       res.json({result,total});
     })
 
-    app.get('/dbusers', async(req,res)=>{
+    app.get('/dbusers', verifyToken,verifyAdmin, async(req,res)=>{
       const page = parseInt(req.query.page);
       const limit = parseInt(req.query.limit);
       const skip = (page-1)*limit;
@@ -146,27 +173,27 @@ async function run() {
       res.json({result,total});
     })
 
-    app.post('/addProduct', async(req,res)=>{
+    app.post('/addProduct', verifyToken,verifyAdmin, async(req,res)=>{
       const newProduct = req.body;
       const result = products.insertOne(newProduct);
       res.send(result);
     })
 
-    app.delete('/productDelete/:id', async(req,res)=>{
+    app.delete('/productDelete/:id',verifyToken,verifyAdmin, async(req,res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
       const result = await products.deleteOne(query);
       res.send(result);
     })
 
-    app.get('/update/:id', async(req,res)=>{
+    app.get('/update/:id',verifyToken,verifyAdmin, async(req,res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
       const result = await products.findOne(query);
       res.send(result);
     })
     
-    app.patch('/update/:id', async(req,res)=>{
+    app.patch('/update/:id',verifyToken,verifyAdmin, async(req,res)=>{
       const id = req.params.id;
       const UpdatedInfo = req.body;
       const query = {_id: new ObjectId(id)};
@@ -177,14 +204,14 @@ async function run() {
       res.send(result);
     })
 
-    app.delete('/user/:id', async(req,res)=>{
+    app.delete('/user/:id',verifyToken,verifyAdmin, async(req,res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
       const result = await users.deleteOne(query);
       res.send(result);
     })
 
-    app.patch('/userMakeAdmin/:id', async(req,res)=>{
+    app.patch('/userMakeAdmin/:id',verifyToken,verifyAdmin, async(req,res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
       const updateDoc = {
@@ -197,7 +224,7 @@ async function run() {
     })
 
 
-    app.patch('/userRemoveAdmin/:id',async(req,res)=>{
+    app.patch('/userRemoveAdmin/:id',verifyToken,verifyAdmin,async(req,res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
       const updateDoc = {
@@ -228,3 +255,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`server is running at ${port}`);
 })
+
