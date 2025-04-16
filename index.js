@@ -149,7 +149,7 @@ async function run() {
     app.get('/update/:id', async(req,res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
-      const result = products.findOne(query);
+      const result = await products.findOne(query);
       res.send(result);
     })
     
