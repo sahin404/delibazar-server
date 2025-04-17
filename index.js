@@ -173,10 +173,22 @@ async function run() {
     app.get('/products', verifyToken, verifyAdmin, async (req, res) => {
       const page = parseInt(req.query.page);
       const limit = parseInt(req.query.limit);
+      const category = req.query.category;
       const skip = (page - 1) * limit;
-      const result = await products.find().skip(skip).limit(limit).toArray();
-      const total = await products.estimatedDocumentCount();
-      res.json({ result, total });
+      if(category==='all'){
+        const result = await products.find().skip(skip).limit(limit).toArray();
+        const total = await products.estimatedDocumentCount();
+        res.json({ result, total });
+      }
+      else{
+        const query = {category:category};
+        const result = await products.find(query).skip(skip).limit(limit).toArray();
+        const total = await products.estimatedDocumentCount(query);
+        res.json({ result, total });
+      }
+      
+      
+      
     })
 
     app.get('/dbusers', verifyToken, verifyAdmin, async (req, res) => {
