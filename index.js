@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const app = express();
 const port = process.env.PORT || 5000;
 
+//
 app.use(cors());
 app.use(express.json());
 require('dotenv').config();
@@ -74,9 +75,18 @@ async function run() {
     // Showing homepage product
     app.get('/products/:category', async (req, res) => {
       const category = req.params.category;
-      const query = { category: category }
-      const result = await products.find(query).toArray();
-      res.send(result);
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 9;
+      const skip = (page - 1) * limit;
+      
+      const query = { category: category };
+      const total = await products.countDocuments(query);
+      const result = await products.find(query)
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+      
+      res.send({ products: result, total });
     })
 
 
