@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000;
 const axios = require('axios');
 
 //for no rendering in render
-const url = `https://delibazar.onrender.com/`;
+const url = `https://delibazar-server.onrender.com`;
 const interval = 30000;
 
 function reloadWebsite() {
