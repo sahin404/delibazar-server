@@ -4,7 +4,7 @@ const { verifyToken } = require('./middleware');
 const jwt = require('jsonwebtoken')
 const app = express();
 const port = process.env.PORT || 5000;
-import axios from 'axios';
+const axios = require('axios');
 
 //for no rendering in render
 const url = `https://delibazar.onrender.com/`;
