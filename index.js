@@ -4,8 +4,25 @@ const { verifyToken } = require('./middleware');
 const jwt = require('jsonwebtoken')
 const app = express();
 const port = process.env.PORT || 5000;
+import axios from 'axios';
 
-//
+//for no rendering in render
+const url = `https://delibazar.onrender.com/`;
+const interval = 30000;
+
+function reloadWebsite() {
+  axios
+    .get(url)
+    .then((response) => {
+      console.log("website reloded");
+    })
+    .catch((error) => {
+      console.error(`Error : ${error.message}`);
+    });
+}
+
+setInterval(reloadWebsite, interval);
+
 app.use(cors());
 app.use(express.json());
 require('dotenv').config();
