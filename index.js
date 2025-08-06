@@ -7,21 +7,21 @@ const port = process.env.PORT || 5000;
 const axios = require('axios');
 
 //for no rendering in render
-const url = `https://delibazar-server.onrender.com`;
-const interval = 30000;
+// const url = `https://delibazar-server.onrender.com`;
+// const interval = 30000;
 
-function reloadWebsite() {
-  axios
-    .get(url)
-    .then((response) => {
-      console.log("website reloded");
-    })
-    .catch((error) => {
-      console.error(`Error : ${error.message}`);
-    });
-}
+// function reloadWebsite() {
+//   axios
+//     .get(url)
+//     .then((response) => {
+//       console.log("website reloded");
+//     })
+//     .catch((error) => {
+//       console.error(`Error : ${error.message}`);
+//     });
+// }
 
-setInterval(reloadWebsite, interval);
+// setInterval(reloadWebsite, interval);
 
 app.use(cors());
 app.use(express.json());
@@ -132,6 +132,7 @@ async function run() {
       const result = await cartsCollection.insertOne(info);
       res.send(result);
     })
+    
     app.get('/carts', verifyToken, async (req, res) => {
       const { email } = req.query;
       if (req.decoded.email != email) {
