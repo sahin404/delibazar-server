@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import cartsRouter from './routes/carts.router.js';
 import searchRouter from './routes/search.router.js';
 import cors from 'cors';
+import axios from "axios"
 
 //for no rendering in render
 const url = `https://delibazar-server.onrender.com`;
